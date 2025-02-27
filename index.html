@@ -8,10 +8,10 @@
     <!-- Google Tag Manager -->
     <script>
         (function(w,d,s,l,i){
-            w[l]=w[l]||[];
-            w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'});
-            var f=d.getElementsByTagName(s)[0], j=d.createElement(s), dl=l!='dataLayer'?'&l='+l:'';
-            j.async=true; j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+            w[l]=w[l]||[]; 
+            w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'}); 
+            var f=d.getElementsByTagName(s)[0], j=d.createElement(s), dl=l!='dataLayer'?'&l='+l:''; 
+            j.async=true; j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl; 
             f.parentNode.insertBefore(j,f);
         })(window,document,'script','dataLayer','GTM-KVKGG526');
     </script>
@@ -20,27 +20,35 @@
     <script>
         // Function to trigger API call and log the response in the console
         function clickFunction() {
-            // Get query parameters from the URL
-            const params = new URLSearchParams(window.location.search);
-            const key = params.get("key");
-            const value = params.get("value");
+            let key, value;
 
+            // Ensure dataLayer exists
+            if (typeof window.dataLayer === "undefined") {
+                window.dataLayer = [];
+            }
+
+
+            // Loop through dataLayer in reverse to find the most recent 'queryParamsCaptured' event
+            for (let i = window.dataLayer.length - 1; i >= 0; i--) {  
+                if (window.dataLayer[i].event === "queryParamsCaptured" &&
+                    window.dataLayer[i].queryKey &&
+                    window.dataLayer[i].queryValue) { 
+                    
+                    key = window.dataLayer[i].queryKey; 
+                    value = window.dataLayer[i].queryValue; 
+                    break;  
+                }  
+            }
+
+            // Check if valid values exist before making API call
             if (key && value) {
-                // Push data to the GTM data layer
-                window.dataLayer = window.dataLayer || [];
-                window.dataLayer.push({
-                    'event': 'queryParamsCaptured',
-                    'queryKey': key,
-                    'queryValue': value
-                });
+                console.log("Here are the values retreived from GTM dataLayer:", key, value);
 
-                console.log("Data pushed to GTM dataLayer:", key, value);
-
-                // Prepare the GET request URL for httpbin.org using '+' operator
-                const updatedUrl = 'https://httpbin.org/get?key=' + encodeURIComponent(key) + '&value=' + encodeURIComponent(value);
+                // Encode values to handle spaces & special characters
+                const apiUrl = `https://httpbin.org/get?key=${encodeURIComponent(key)}&value=${encodeURIComponent(value)}`;
 
                 // Make the GET request
-                fetch(updatedUrl)
+                fetch(apiUrl)
                     .then(response => response.json())
                     .then(data => {
                         console.log("API Response:", data);
@@ -49,13 +57,12 @@
                         console.error("Error in API request:", error);
                     });
             } else {
-                console.log("No key or value found in the URL.");
+                console.log("No valid key-value pair found in GTM dataLayer.");
             }
         }
 
-        // Wait for DOM to be fully loaded before adding the event listener
+        // Add event listener when DOM is fully loaded
         document.addEventListener("DOMContentLoaded", function() {
-            // Add event listener to the button after DOM is loaded
             document.getElementById("buttonholder").addEventListener("click", clickFunction);
         });
     </script>
