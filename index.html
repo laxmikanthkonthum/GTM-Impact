@@ -37,10 +37,10 @@
                 console.log("Data pushed to GTM dataLayer:", key, value);
 
                 // Prepare the GET request URL for httpbin.org using '+' operator
-                const Updatedurl = 'https://httpbin.org/get?key=' + encodeURIComponent(key) + '&value=' + encodeURIComponent(value);
+                const updatedUrl = 'https://httpbin.org/get?key=' + encodeURIComponent(key) + '&value=' + encodeURIComponent(value);
 
                 // Make the GET request
-                fetch(Updatedurl)
+                fetch(updatedUrl)
                     .then(response => response.json())
                     .then(data => {
                         console.log("API Response:", data);
@@ -53,10 +53,11 @@
             }
         }
 
-        // Add event listener to the button
-
-        document.getElementById("buttonholder").addEventListener("click", clickFunction);
-
+        // Wait for DOM to be fully loaded before adding the event listener
+        document.addEventListener("DOMContentLoaded", function() {
+            // Add event listener to the button after DOM is loaded
+            document.getElementById("buttonholder").addEventListener("click", clickFunction);
+        });
     </script>
 </head>
 <body>
