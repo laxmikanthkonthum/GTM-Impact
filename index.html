@@ -27,6 +27,19 @@
                 window.dataLayer = [];
             }
 
+            // Get query parameters from the URL
+            const params = new URLSearchParams(window.location.search);
+            key = params.get("key");
+            value = params.get("value");
+
+            // Push data to GTM dataLayer if key and value exist
+            if (key && value) {
+                window.dataLayer.push({
+                    'event': 'queryParamsCaptured',
+                    'queryKey': key,
+                    'queryValue': value
+                });
+            }
 
             // Loop through dataLayer in reverse to find the most recent 'queryParamsCaptured' event
             for (let i = window.dataLayer.length - 1; i >= 0; i--) {  
@@ -42,7 +55,7 @@
 
             // Check if valid values exist before making API call
             if (key && value) {
-                console.log("Here are the values retreived from GTM dataLayer:", key, value);
+                console.log("Here are the values retrieved from GTM dataLayer:", key, value);
 
                 // Encode values to handle spaces & special characters
                 const apiUrl = `https://httpbin.org/get?key=${encodeURIComponent(key)}&value=${encodeURIComponent(value)}`;
@@ -79,7 +92,5 @@
     <!-- Button to trigger the API call -->
     <button id="buttonholder">Click Here!</button>
 
-    <!-- Display API response -->
-    <p id="outputtext"></p>
 </body>
 </html>
