@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Call Button</title>
+
     <!-- Google Tag Manager -->
     <script>
         (function(w,d,s,l,i){
@@ -13,18 +17,16 @@
     </script>
     <!-- End Google Tag Manager -->
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Call Button</title>
-    
     <script>
-        // Function to push 'key' and 'value' to GTM when the button is clicked
-        function pushToGTMOnClick() {
+        // Function to trigger API call and log the response in the console
+        function clickFunction() {
+            // Get query parameters from the URL
             const params = new URLSearchParams(window.location.search);
             const key = params.get("key");
             const value = params.get("value");
 
             if (key && value) {
+                // Push data to the GTM data layer
                 window.dataLayer = window.dataLayer || [];
                 window.dataLayer.push({
                     'event': 'queryParamsCaptured',
@@ -33,16 +35,32 @@
                 });
 
                 console.log("Data pushed to GTM dataLayer:", key, value);
+
+                // Prepare the GET request URL for httpbin.org using '+' operator
+                const Updatedurl = 'https://httpbin.org/get?key=' + encodeURIComponent(key) + '&value=' + encodeURIComponent(value);
+
+                // Make the GET request
+                fetch(Updatedurl)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("API Response:", data);
+                    })
+                    .catch(error => {
+                        console.error("Error in API request:", error);
+                    });
+            } else {
+                console.log("No key or value found in the URL.");
             }
         }
 
-        // Add event listener to the button for click event
-        document.addEventListener("DOMContentLoaded", function() {
-            document.getElementById("buttonholder").addEventListener("click", pushToGTMOnClick);
-        });
+        // Add event listener to the button
+
+            document.getElementById("buttonholder").addEventListener("Click Here! ", clickFunction);
+
     </script>
 </head>
 <body>
+
     <!-- Google Tag Manager (noscript) -->
     <noscript>
         <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KVKGG526"
@@ -50,7 +68,10 @@
     </noscript>
     <!-- End Google Tag Manager (noscript) -->
 
+    <!-- Button to trigger the API call -->
     <button id="buttonholder">Click Me</button>
+
+    <!-- Display API response -->
     <p id="outputtext"></p>
 </body>
 </html>
