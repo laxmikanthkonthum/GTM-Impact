@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Call Button</title>
+    <script>
+        function toFetch(updatedURL) {
+            fetch(updatedURL)
+                .then(response => response.json())
+                .then(json => {
+                    var output = json.contents.translated;
+                    document.getElementById('outputtext').innerText = output;
+                })
+                .catch(() => alert("Some error occurred"));
+        }
+
+        function clickFunction() {
+            let userInput = document.getElementById('inputtext').value;
+            let modifiedInput = urlConstructor(userInput);
+            toFetch(modifiedInput);
+        }
+
+        function urlConstructor(input) {
+            return `https://api.example.com/translate?text=${encodeURIComponent(input)}`;
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("buttonholder").addEventListener("click", clickFunction);
+        });
+    </script>
+</head>
+<body>
+    <input type="text" id="inputtext" placeholder="Enter text">
+    <button id="buttonholder">Click Me</button>
+    <p id="outputtext"></p>
+</body>
+</html>
