@@ -5,7 +5,7 @@ This project demonstrates how to integrate Google Tag Manager (GTM) with a simpl
 
 **How It Works**
 
-1.  GTM is initialized in the <head> and <noscript> sections.
+1.  GTM is initialized in the head and noscript sections.
 2.  Captures and stores query parameters (key and value) in dataLayer.
 3.  When the button is clicked, the script retrieves the most recent stored values from dataLayer.
 4.  If valid values exist, an API request is made to https://httpbin.org/get with the parameters.
