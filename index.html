@@ -18,19 +18,12 @@
     <!-- End Google Tag Manager -->
 
     <script>
-        // Function to trigger API call and log the response in the console
-        function clickFunction() {
-            let key, value;
-
-            // Ensure dataLayer exists
-            if (typeof window.dataLayer === "undefined") {
-                window.dataLayer = [];
-            }
-
+        // Function to push query parameters to GTM dataLayer when the page loads
+        function pushParamsToGTM() {
             // Get query parameters from the URL
             const params = new URLSearchParams(window.location.search);
-            key = params.get("key");
-            value = params.get("value");
+            const key = params.get("key");
+            const value = params.get("value");
 
             // Push data to GTM dataLayer if key and value exist
             if (key && value) {
@@ -39,14 +32,21 @@
                     'queryKey': key,
                     'queryValue': value
                 });
+                console.log("Data pushed to GTM dataLayer:", key, value);
+            } else {
+                console.log("No valid query parameters found in the URL.");
             }
+        }
+
+        // Function to trigger API call using the data from the GTM dataLayer
+        function clickFunction() {
+            let key, value;
 
             // Loop through dataLayer in reverse to find the most recent 'queryParamsCaptured' event
             for (let i = window.dataLayer.length - 1; i >= 0; i--) {  
                 if (window.dataLayer[i].event === "queryParamsCaptured" &&
                     window.dataLayer[i].queryKey &&
                     window.dataLayer[i].queryValue) { 
-                    
                     key = window.dataLayer[i].queryKey; 
                     value = window.dataLayer[i].queryValue; 
                     break;  
@@ -55,7 +55,7 @@
 
             // Check if valid values exist before making API call
             if (key && value) {
-                console.log("Here are the values retrieved from GTM dataLayer:", key, value);
+                console.log("Using the values from GTM dataLayer:", key, value);
 
                 // Encode values to handle spaces & special characters
                 const apiUrl = `https://httpbin.org/get?key=${encodeURIComponent(key)}&value=${encodeURIComponent(value)}`;
@@ -76,6 +76,10 @@
 
         // Add event listener when DOM is fully loaded
         document.addEventListener("DOMContentLoaded", function() {
+            // Push the query parameters to the dataLayer as soon as the page is loaded
+            pushParamsToGTM();
+
+            // Add the click event listener for the button
             document.getElementById("buttonholder").addEventListener("click", clickFunction);
         });
     </script>
